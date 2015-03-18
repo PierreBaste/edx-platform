@@ -481,7 +481,7 @@ def ensure_user_information(strategy, auth_entry, user=None, *args, **kwargs):
     user_inactive = user and not user.is_active
 
     if auth_entry == AUTH_ENTRY_LOGIN_API:
-        if user_unset or user_inactive:
+        if user_unset:
             return HttpResponseBadRequest()
 
     elif auth_entry == AUTH_ENTRY_REGISTER_API:
