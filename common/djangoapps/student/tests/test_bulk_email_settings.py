@@ -40,7 +40,7 @@ class TestStudentDashboardEmailView(ModuleStoreTestCase):
         self.url = reverse('dashboard')
         # URL for email settings modal
         self.email_modal_link = (
-            '<a href="#email-settings-modal" class="email-settings" rel="leanModal" '
+            '<a href="#email-settings-modal" class="action action-email-settings" rel="leanModal" '
             'data-course-id="{org}/{num}/{name}" data-course-number="{num}" '
             'data-optout="False">Email Settings</a>'
         ).format(
@@ -87,6 +87,7 @@ class TestStudentDashboardEmailView(ModuleStoreTestCase):
         # if this course isn't authorized
         response = self.client.get(self.url)
         print response.content
+        print self.email_modal_link
         self.assertTrue(self.email_modal_link in response.content)
 
 
@@ -112,9 +113,9 @@ class TestStudentDashboardEmailViewXMLBacked(ModuleStoreTestCase):
 
         # URL for email settings modal
         self.email_modal_link = (
-            '<a href="#email-settings-modal" class="email-settings" rel="leanModal" '
+            '<a href="#email-settings-modal" class="action action-email-settings" rel="leanModal" '
             'data-course-id="{org}/{num}/{name}" data-course-number="{num}" '
-            'data-optout="False">Email Settings</a>'
+            ' data-optout="False">Email Settings</a>'
         ).format(
             org='edX',
             num='toy',
