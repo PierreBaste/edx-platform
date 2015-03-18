@@ -45,9 +45,7 @@ class DashboardPage(PageObject):
         Return list of the names of available courses (e.g. "999 edX Demonstration Course")
         """
         def _get_course_name(el):
-            # The first component in the link text is the course number
-            course_name = el.text
-            return course_name
+            return el.text
 
         return self.q(css='h3.course-title > a').map(_get_course_name).results
 

@@ -97,11 +97,11 @@
         }
 
         function toggleCourseActionsDropdown(event) {
-            var dropdown = $(event.target).closest('.action-more').find('.actions-dropdown-list')
+            var dropdown = $('.wrapper-action-more').find('.actions-dropdown')
 
             event.preventDefault();
 
-            $(this).toggleClass('is-visible');
+            dropdown.toggleClass('is-visible');
 
             // add BI event here
 
