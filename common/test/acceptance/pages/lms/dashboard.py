@@ -111,7 +111,7 @@ class DashboardPage(PageObject):
             el = course_listing[0]
 
             # Expand the upsell copy and click the upgrade button
-            el.find_element_by_css_selector('.message-upsell').click()
+            el.find_element_by_css_selector('.message-upsell .ui-toggle-expansion').click()
             el.find_element_by_css_selector('#upgrade-to-verified').click()
 
             upgrade_page.wait_for_page()
@@ -174,4 +174,4 @@ class DashboardPage(PageObject):
         """
         Verify if pre-requisite course messages are being displayed.
         """
-        return self.q(css='section.prerequisites > .tip').visible
+        return self.q(css='li.prerequisites > .tip').visible
