@@ -1548,12 +1548,6 @@ class ThirdPartyRegistrationTestMixin(ThirdPartyOAuthTestMixin):
             "email": user.email if user else "test@test.com",
         }
 
-    def _assert_oauth_error(self, response, status_code, error):
-        """Assert that the given response was an error with the given status_code and error code"""
-        self.assertEqual(response.status_code, status_code)
-        self.assertEqual(json.loads(response.content)['error'], error)
-        self.assertNotIn("partial_pipeline", self.client.session)
-
     def _assert_existing_user_error(self, response):
         """Assert that the given response was an error with the given status_code and error code"""
         self.assertEqual(response.status_code, 409)
@@ -1562,6 +1556,16 @@ class ThirdPartyRegistrationTestMixin(ThirdPartyOAuthTestMixin):
             self.assertIn(conflict_attribute, errors)
             self.assertIn("belongs to an existing account", errors[conflict_attribute][0]["user_message"])
         self.assertNotIn("partial_pipeline", self.client.session)
+
+    def _assert_access_token_error(self, response, expected_error_message):
+        self.assertEqual(response.status_code, 400)
+        response_json = json.loads(response.content)
+        self.assertEqual(
+            response_json,
+            {"access_token": [{"user_message": expected_error_message}]}
+        )
+        self.assertNotIn("partial_pipeline", self.client.session)
+        self._verify_user_existence(user_exists=False, social_link_exists=False)
 
     def _verify_user_existence(self, user_exists, social_link_exists, user_is_active=None, username=None):
         """Verifies whether the user object exists."""
@@ -1618,21 +1622,21 @@ class ThirdPartyRegistrationTestMixin(ThirdPartyOAuthTestMixin):
         response = self.client.post(self.url, self.data())
         disable_transaction_methods()
 
-        self._assert_oauth_error(response, 400, "invalid_grant")
-        self._verify_user_existence(user_exists=False, social_link_exists=False)
+        self._assert_access_token_error(response, "The provided access_token is not valid.")
 
-    @ddt.data("access_token", "client_id")
-    def test_missing_auth_field(self, field_name):
+    def test_missing_token(self):
         data = self.data()
-        data.pop(field_name)
+        data.pop("access_token")
 
         # temporarily enable transactions in test code to verify the transaction gets aborted.
         restore_transaction_methods()
         response = self.client.post(self.url, data)
         disable_transaction_methods()
 
-        self._assert_oauth_error(response, 400, "invalid_request")
-        self._verify_user_existence(user_exists=False, social_link_exists=False)
+        self._assert_access_token_error(
+            response,
+            "An access_token is required when passing value ({}) for provider.".format(self.BACKEND)
+        )
 
 
 @skipUnless(settings.FEATURES.get("ENABLE_THIRD_PARTY_AUTH"), "third party auth not enabled")

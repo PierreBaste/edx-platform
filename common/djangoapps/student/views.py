@@ -1483,10 +1483,25 @@ def create_account_with_params(request, params):
         if should_link_with_social_auth:
             request.user = user
             request.social_strategy = social_utils.load_strategy(backend=params['provider'], request=request)
-            from student.third_party_forms import ThirdPartyAccountCreationForm
-            form = ThirdPartyAccountCreationForm(request=request, data=params)
-            if not form.is_valid():
-                raise OAuthValidationError(form.errors)
+            social_access_token = params.get('access_token')
+            if not social_access_token:
+                raise ValidationError({
+                    'access_token': [
+                        _("An access_token is required when passing value ({}) for provider.").format(
+                            params['provider']
+                        )
+                    ]
+                })
+            request.session[pipeline.AUTH_ENTRY_KEY] = pipeline.AUTH_ENTRY_REGISTER_API
+            pipeline_user = None
+            try:
+                pipeline_user = request.social_strategy.backend.do_auth(social_access_token)
+            except HTTPError:
+                pass
+            if not pipeline_user or not isinstance(pipeline_user, User):
+                # Ensure user does not re-enter the pipeline
+                request.social_strategy.clean_partial_pipeline()
+                raise ValidationError({'access_token': [_("The provided access_token is not valid.")]})
 
     if settings.FEATURES.get('ENABLE_DISCUSSION_EMAIL_DIGEST'):
         try:

@@ -287,9 +287,6 @@ class RegistrationView(APIView):
         try:
             create_account_with_params(request, data)
 
-        except OAuthValidationError as oauth_error:
-            return JsonResponse(oauth_error.message, status=400)
-
         except ValidationError as err:
             # Should only get non-field errors from this function
             assert NON_FIELD_ERRORS not in err.message_dict
