@@ -2,6 +2,7 @@
 Tests for OAuth token exchange forms
 """
 import unittest
+
 from django.conf import settings
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase
@@ -10,9 +11,9 @@ import httpretty
 from provider import scope
 import social.apps.django_app.utils as social_utils
 
-from third_party_auth.tests.utils import ThirdPartyOAuthTestMixinFacebook, ThirdPartyOAuthTestMixinGoogle
 from oauth_exchange.forms import AccessTokenExchangeForm
 from oauth_exchange.tests.utils import AccessTokenExchangeTestMixin
+from third_party_auth.tests.utils import ThirdPartyOAuthTestMixinFacebook, ThirdPartyOAuthTestMixinGoogle
 
 
 class AccessTokenExchangeFormTest(AccessTokenExchangeTestMixin):

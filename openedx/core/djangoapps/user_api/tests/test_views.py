@@ -4,7 +4,13 @@ import datetime
 import base64
 import json
 import re
+from unittest import skipUnless, SkipTest
+
+import ddt
 import httpretty
+from pytz import UTC
+import mock
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core import mail
@@ -12,21 +18,19 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.testcases import restore_transaction_methods, disable_transaction_methods
 from django.test.utils import override_settings
-from unittest import skipUnless, SkipTest
-import ddt
-from pytz import UTC
-import mock
-from xmodule.modulestore.tests.factories import CourseFactory
-from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 from social.apps.django_app.default.models import UserSocialAuth
+
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
 from django_comment_common import models
+from student.tests.factories import UserFactory
 from third_party_auth.tests.testutil import simulate_running_pipeline
 from third_party_auth.tests.utils import (
     ThirdPartyOAuthTestMixin, ThirdPartyOAuthTestMixinFacebook, ThirdPartyOAuthTestMixinGoogle
 )
-from student.tests.factories import UserFactory
+from xmodule.modulestore.tests.factories import CourseFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from ..accounts.api import get_account_settings
 from ..api import account as account_api, profile as profile_api
 from ..models import UserOrgTag

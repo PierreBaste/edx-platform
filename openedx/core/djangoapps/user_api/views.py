@@ -1,9 +1,5 @@
 """HTTP end-points for the User API. """
 import copy
-from openedx.core.lib.api.permissions import ApiKeyHeaderPermission
-from opaque_keys import InvalidKeyError
-import third_party_auth
-from provider.forms import OAuthValidationError
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +9,9 @@ from django.core.exceptions import ImproperlyConfigured, NON_FIELD_ERRORS, Valid
 from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt
-from opaque_keys.edx import locator
+
+from django_countries import countries
+from provider.forms import OAuthValidationErro
 from rest_framework import authentication
 from rest_framework import filters
 from rest_framework import generics
@@ -21,12 +19,16 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError
-from django_countries import countries
-from django_comment_common.models import Role
-from opaque_keys.edx.locations import SlashSeparatedCourseKey
-from edxmako.shortcuts import marketing_link
 
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx import locator
+from opaque_keys.edx.locations import SlashSeparatedCourseKey
+
+from django_comment_common.models import Role
+from edxmako.shortcuts import marketing_link
+from openedx.core.lib.api.permissions import ApiKeyHeaderPermission
 from student.views import create_account_with_params, set_marketing_cookie
+import third_party_auth
 from util.authentication import SessionAuthenticationAllowInactiveUser
 from util.json_request import JsonResponse
 from .api import account as account_api, profile as profile_api

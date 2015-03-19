@@ -1,11 +1,13 @@
 """Common utility for testing third party oauth2 features."""
 import json
+
 import httpretty
 
 from provider.constants import PUBLIC
 from provider.oauth2.models import Client
-from student.tests.factories import UserFactory
 from social.apps.django_app.default.models import UserSocialAuth
+
+from student.tests.factories import UserFactory
 
 
 @httpretty.activate

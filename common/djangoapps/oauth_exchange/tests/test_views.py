@@ -5,6 +5,7 @@ from datetime import timedelta
 import json
 import mock
 import unittest
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -13,8 +14,8 @@ import provider.constants
 from provider import scope
 from provider.oauth2.models import AccessToken
 
-from third_party_auth.tests.utils import ThirdPartyOAuthTestMixinFacebook, ThirdPartyOAuthTestMixinGoogle
 from oauth_exchange.tests.utils import AccessTokenExchangeTestMixin
+from third_party_auth.tests.utils import ThirdPartyOAuthTestMixinFacebook, ThirdPartyOAuthTestMixinGoogle
 
 
 class AccessTokenExchangeViewTest(AccessTokenExchangeTestMixin):
