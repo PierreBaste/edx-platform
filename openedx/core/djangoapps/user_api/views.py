@@ -11,7 +11,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt
 
 from django_countries import countries
-from provider.forms import OAuthValidationError
 from rest_framework import authentication
 from rest_framework import filters
 from rest_framework import generics

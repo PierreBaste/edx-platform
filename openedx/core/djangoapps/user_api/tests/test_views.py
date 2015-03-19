@@ -16,7 +16,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.test.testcases import restore_transaction_methods, disable_transaction_methods
+from django.test.testcases import restore_transaction_methods, disable_transaction_methods, TransactionTestCase
 from django.test.utils import override_settings
 
 from social.apps.django_app.default.models import UserSocialAuth
@@ -1640,13 +1640,17 @@ class ThirdPartyRegistrationTestMixin(ThirdPartyOAuthTestMixin):
 
 
 @skipUnless(settings.FEATURES.get("ENABLE_THIRD_PARTY_AUTH"), "third party auth not enabled")
-class TestFacebookRegistrationView(ThirdPartyRegistrationTestMixin, ThirdPartyOAuthTestMixinFacebook, ApiTestCase):
+class TestFacebookRegistrationView(
+    ThirdPartyRegistrationTestMixin, ThirdPartyOAuthTestMixinFacebook, TransactionTestCase
+):
     """Tests the User API registration endpoint with Facebook authentication."""
     pass
 
 
 @skipUnless(settings.FEATURES.get("ENABLE_THIRD_PARTY_AUTH"), "third party auth not enabled")
-class TestGoogleRegistrationView(ThirdPartyRegistrationTestMixin, ThirdPartyOAuthTestMixinGoogle, ApiTestCase):
+class TestGoogleRegistrationView(
+    ThirdPartyRegistrationTestMixin, ThirdPartyOAuthTestMixinGoogle, TransactionTestCase
+):
     """Tests the User API registration endpoint with Google authentication."""
     pass
 
