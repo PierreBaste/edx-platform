@@ -1568,6 +1568,8 @@ class ThirdPartyRegistrationTestMixin(ThirdPartyOAuthTestMixin):
         if social_link_exists:
             social_users = UserSocialAuth.objects.filter(user=users[0], provider=self.BACKEND)
             self.assertEquals(len(social_users), 1)
+        else:
+            self.assertEquals(UserSocialAuth.objects.count(), 0)
 
     def test_success(self):
         self._verify_user_existence(user_exists=False, social_link_exists=False)

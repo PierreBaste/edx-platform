@@ -477,24 +477,25 @@ def ensure_user_information(strategy, auth_entry, user=None, *args, **kwargs):
         """Redirects to the registration page."""
         return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_REGISTER], strategy))
 
-    user_unset = user is None
     user_inactive = user and not user.is_active
 
     if auth_entry == AUTH_ENTRY_LOGIN_API:
-        if user_unset:
+        if not user:
             return HttpResponseBadRequest()
 
     elif auth_entry == AUTH_ENTRY_REGISTER_API:
-        if not user_unset and user != strategy.request.user:
+        # Return the user object that was stored in the HTTP request.
+        # The user was stored after the user's account was created and before this pipeline started.
+        if user and user != strategy.request.user:
             return HttpResponseBadRequest()
         return {'user': strategy.request.user}
 
     elif auth_entry == AUTH_ENTRY_LOGIN or auth_entry == AUTH_ENTRY_LOGIN_2:
-        if user_unset or user_inactive:
+        if not user or user_inactive:
             return dispatch_to_login()
 
     elif auth_entry == AUTH_ENTRY_REGISTER or auth_entry == AUTH_ENTRY_REGISTER_2:
-        if user_unset:
+        if not user:
             return dispatch_to_register()
         elif user_inactive:
             # If the user has a linked account, but has not yet activated
