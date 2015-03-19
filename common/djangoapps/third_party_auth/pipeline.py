@@ -444,10 +444,6 @@ def parse_query_params(strategy, response, *args, **kwargs):
     if not (auth_entry and auth_entry in _AUTH_ENTRY_CHOICES):
         raise AuthEntryError(strategy.backend, 'auth_entry missing or invalid')
 
-    # Note: We expect only one member of this dictionary to be `True` at any
-    # given time. If something changes this convention in the future, please look
-    # at the `login_analytics` function in this file as well to ensure logging
-    # is still done properly
     return {'auth_entry': auth_entry}
 
 
@@ -579,27 +575,14 @@ def set_logged_in_cookie(backend=None, user=None, request=None, auth_entry=None,
 
 
 @partial.partial
-def login_analytics(strategy, *args, **kwargs):
+def login_analytics(strategy, auth_entry, *args, **kwargs):
     """ Sends login info to Segment.io """
+
     event_name = None
-
-    action_to_event_name = {
-        'is_login': 'edx.bi.user.account.authenticated',
-        'is_dashboard': 'edx.bi.user.account.linked',
-        'is_profile': 'edx.bi.user.account.linked',
-
-        # Backwards compatibility: during an A/B test for the combined
-        # login/registration form, we introduced a new login end-point.
-        # Since users may continue to have this in their sessions after
-        # the test concludes, we need to continue accepting this action.
-        'is_login_2': 'edx.bi.user.account.authenticated',
-    }
-
-    # Note: we assume only one of the `action` kwargs (is_dashboard, is_login) to be
-    # `True` at any given time
-    for action in action_to_event_name.keys():
-        if kwargs.get(action):
-            event_name = action_to_event_name[action]
+    if auth_entry in [AUTH_ENTRY_LOGIN, AUTH_ENTRY_LOGIN_2, AUTH_ENTRY_LOGIN_API]:
+        event_name = 'edx.bi.user.account.authenticated'
+    elif auth_entry in [AUTH_ENTRY_DASHBOARD]:
+        event_name = 'edx.bi.user.account.linked'
 
     if event_name is not None:
         tracking_context = tracker.get_tracker().resolve_context()
